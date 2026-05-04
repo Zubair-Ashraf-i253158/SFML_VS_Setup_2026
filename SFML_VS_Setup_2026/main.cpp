@@ -47,15 +47,22 @@ int main()
         sf::Event event;
         event.type = sf::Event::Count;
 
-        sf::Event tempEvent;
-        while (window.pollEvent(tempEvent))
+        while (window.pollEvent(event))
         {
-            if (tempEvent.type == sf::Event::Closed)
+            if (event.type == sf::Event::Closed)
                 window.close();
-            event = tempEvent;
+
+            // ESC ONLY here - one place
+            if (event.type == sf::Event::KeyPressed &&
+                event.key.code == sf::Keyboard::Escape &&
+                gameState == 5)
+            {
+                paused = !paused;
+            }
         }
 
         window.clear();
+
 
         if (gameState == 0) //splash
         {
@@ -123,9 +130,6 @@ int main()
         {
             //escape
 
-            if (event.type == sf::Event::KeyPressed &&
-                event.key.code == sf::Keyboard::Escape)
-                paused = !paused;
 
 
             if (!paused)
@@ -338,88 +342,89 @@ int main()
                 }
 
             }
-            else // paused
-            {
-                // game still drawn behind
-                level.draw(window);
-                h.draw(window);
-                window.draw(player);
-                if (multiPl) window.draw(player2);
+           else // PAUSED - draw game then overlay
+           {
+               level.draw(window);
+               h.draw(window);
+               window.draw(player);
+               if (multiPl) window.draw(player2);
 
-                // dark overlay
-                sf::RectangleShape overlay(sf::Vector2f(400, 350));
-                overlay.setPosition(200, 125);
-                overlay.setFillColor(sf::Color(0, 0, 0, 210));
-                overlay.setOutlineColor(sf::Color::Cyan);
-                overlay.setOutlineThickness(2);
-                window.draw(overlay);
+               sf::RectangleShape overlay(sf::Vector2f(400, 350));
+               overlay.setPosition(200, 125);
+               overlay.setFillColor(sf::Color(0, 0, 0, 210));
+               overlay.setOutlineColor(sf::Color::Cyan);
+               overlay.setOutlineThickness(2);
+               window.draw(overlay);
 
-                sf::Font pFont;
-                pFont.loadFromFile("assets/FONT/BubbleBobble-rg3rx.ttf");
+               sf::Font pFont;
+               pFont.loadFromFile("assets/FONT/BubbleBobble-rg3rx.ttf");
 
-                // title
-                sf::Text pt("PAUSED", pFont, 45);
-                pt.setFillColor(sf::Color::Cyan);
-                pt.setPosition(310, 140);
-                window.draw(pt);
+               sf::Text pt("PAUSED", pFont, 45);
+               pt.setFillColor(sf::Color::Cyan);
+               pt.setPosition(310, 140);
+               window.draw(pt);
 
-                // options
-                std::string opts[4] = { "ESC - Continue", "S   - Shop", "M   - Main Menu", "X   - Exit Game" };
-                sf::Color cols[4] = { sf::Color::Green, sf::Color::Yellow, sf::Color::White, sf::Color::Red };
+               std::string opts[4] = {
+                   "ESC - Continue",
+                   "S   - Shop",
+                   "M   - Main Menu",
+                   "X   - Exit"
+               };
+               sf::Color cols[4] = {
+                   sf::Color::Green,
+                   sf::Color::Yellow,
+                   sf::Color::White,
+                   sf::Color::Red
+               };
+               for (int i = 0; i < 4; i++)
+               {
+                   sf::Text opt(opts[i], pFont, 28);
+                   opt.setFillColor(cols[i]);
+                   opt.setPosition(250, 230 + i * 55);
+                   window.draw(opt);
+               }
 
-                for (int i = 0; i < 4; i++)
-                {
-                    sf::Text opt(opts[i], pFont, 28);
-                    opt.setFillColor(cols[i]);
-                    opt.setPosition(250, 230 + i * 55);
-                    window.draw(opt);
-                }
-                if (event.type == sf::Event::KeyPressed)
-                {
-                    if (event.key.code == sf::Keyboard::Escape)
-                        paused = false; // sirf yahan unpause karo
-
-                    if (event.key.code == sf::Keyboard::S)
-                    {
-                        paused = false;
-                        gameState = 7;
-                    }
-                    if (event.key.code == sf::Keyboard::M)
-                    {
-                        paused = false;
-                        gameState = 3;
-                    }
-                    if (event.key.code == sf::Keyboard::X)
-                        window.close();
-                }
-            }
+               // PAUSE KEYS - checked against the last event
+               if (event.type == sf::Event::KeyPressed)
+               {
+                   if (event.key.code == sf::Keyboard::S)
+                   {
+                       paused = false;
+                       gameState = 7;
+                   }
+                   else if (event.key.code == sf::Keyboard::M)
+                   {
+                       paused = false;
+                       gameState = 3;
+                   }
+                   else if (event.key.code == sf::Keyboard::X)
+                       window.close();
+                   // ESC handled above in poll loop
+               }
         }
-        else if (gameState == 6) //leaderboard
-        {
-            int result = leaderboard.update(event);
-            if (result == 1) gameState = 3;
-            leaderboard.draw(window);
-        }
-        else if (gameState == 7) //shop
-            {// shop ka apna ESC handle karo
-                if (event.type == sf::Event::KeyPressed &&
-                    (event.key.code == sf::Keyboard::Escape ||
-                        event.key.code == sf::Keyboard::Q))
-                {
-                    gameState = paused ? 5 : 3; // pause se aaya to game, warna menu
-                    paused = false;
-                }
-                else
-                {
-                    int result = shop.update(event, player, &player2, multiPl);
-                    if (result == 3)
-                    {
-                        gameState = paused ? 5 : 3;
-                        paused = false;
-                    }
-                }
-                shop.draw(window);
-}
+    }
+         else if (gameState == 6) // leaderboard
+         {
+             int result = leaderboard.update(event);
+             if (result == 1) gameState = 3;
+             leaderboard.draw(window);
+    }
+         else if (gameState == 7) // shop
+         {
+             // ESC/Q to go back
+             if (event.type == sf::Event::KeyPressed &&
+                 (event.key.code == sf::Keyboard::Escape ||
+                     event.key.code == sf::Keyboard::Q))
+             {
+                 gameState = 5; // back to game
+                 paused = true; // show pause menu again
+             }
+             else
+                 shop.update(event, player, &player2, multiPl);
+
+             shop.draw(window);
+    }
+
 		
 		else if (gameState == 8) //end screen
         {

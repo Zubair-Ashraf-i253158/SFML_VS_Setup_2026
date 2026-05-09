@@ -40,6 +40,7 @@ int main()
 
     // 0=splash 1=login 2=signup 3=mainmenu
     // 4=levelselect 5=playing 6=leaderboard
+	//7=shop
     int gameState = 0;
 
     while (window.isOpen())
@@ -52,14 +53,37 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
 
-            // ESC ONLY here - one place
+			//escape key se pause/unpause karo
             if (event.type == sf::Event::KeyPressed &&
                 event.key.code == sf::Keyboard::Escape &&
                 gameState == 5)
             {
                 paused = !paused;
             }
+
+            if (gameState == 5 && paused) {
+                if (event.key.code == sf::Keyboard::S) {
+                    paused = false;
+                    gameState = 7;
+                }
+                else if (event.key.code == sf::Keyboard::M) {
+                    paused = false;
+                    gameState = 3;
+                }
+                else if (event.key.code == sf::Keyboard::X)
+                    window.close();
+            }
+            if (gameState == 7 &&
+                (event.key.code == sf::Keyboard::Escape ||
+                    event.key.code == sf::Keyboard::Q))
+            {
+                gameState = 5;
+                paused = true;
+            }
         }
+
+    
+       
 
         window.clear();
 
@@ -128,7 +152,7 @@ int main()
         }
         else if (gameState == 5) // playing
         {
-            //escape
+           
 
 
 
@@ -170,25 +194,28 @@ int main()
                 if (level.getCurrentLevel() == 10)
                     gamaAlive = level.getGama().getZinda();
 
-                for (int i = 0; i < maxItems; i++) {
-                    // Player 1 Collision
+                for (int i = 0; i < maxItems; i++) {//power
+                    //Player 1 Collision
                     if (items[i].active && player.getBounds().intersects(items[i].getBounds())) {
-                        items[i].active = false; //Hide item
                         if (items[i].type == GEM) {
+                            items[i].active = false;
                             player.addScore(100);
                             player.addGem(1);
                         }
                         else if (items[i].type == STAR) {
+                            items[i].active = false;
                             player.applyPowerUp();
                         }
                     }
+                    //Player 2 Collision
                     if (multiPl && items[i].active && player2.getBounds().intersects(items[i].getBounds())) {
-                        items[i].active = false; //Hide item
                         if (items[i].type == GEM) {
+                            items[i].active = false;
                             player2.addScore(100);
                             player2.addGem(1);
                         }
                         else if (items[i].type == STAR) {
+                            items[i].active = false;
                             player2.applyPowerUp();
                         }
                     }
@@ -300,7 +327,7 @@ int main()
                         level.spawnItem(200 + i * 20, 300, GEM);
                 }
 
-                // real time leaderboard update
+                //real time leaderboard update
                 leaderboard.updateScore(auth.getUser(), player.getScore());
 
                 if (level.isComplete())
@@ -384,23 +411,7 @@ int main()
                    window.draw(opt);
                }
 
-               // PAUSE KEYS - checked against the last event
-               if (event.type == sf::Event::KeyPressed)
-               {
-                   if (event.key.code == sf::Keyboard::S)
-                   {
-                       paused = false;
-                       gameState = 7;
-                   }
-                   else if (event.key.code == sf::Keyboard::M)
-                   {
-                       paused = false;
-                       gameState = 3;
-                   }
-                   else if (event.key.code == sf::Keyboard::X)
-                       window.close();
-                   // ESC handled above in poll loop
-               }
+               
         }
     }
          else if (gameState == 6) // leaderboard
@@ -411,15 +422,7 @@ int main()
     }
          else if (gameState == 7) // shop
          {
-             // ESC/Q to go back
-             if (event.type == sf::Event::KeyPressed &&
-                 (event.key.code == sf::Keyboard::Escape ||
-                     event.key.code == sf::Keyboard::Q))
-             {
-                 gameState = 5; // back to game
-                 paused = true; // show pause menu again
-             }
-             else
+           
                  shop.update(event, player, &player2, multiPl);
 
              shop.draw(window);

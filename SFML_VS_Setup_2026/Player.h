@@ -27,7 +27,7 @@ private:
 	//power up ka code
 	bool powerUpActive = false;
 	int powerUpTimer = 0;//power up time 
-	float defaultMovement = 5.0f; 
+	float defaultMovement = 3.0f; 
 	float currentMovement = 3.0f;
 
 	bool facingRight = true;

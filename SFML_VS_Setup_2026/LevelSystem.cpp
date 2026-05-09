@@ -519,15 +519,11 @@ void Level::draw(sf::RenderWindow& window)
     // invisible draw karo
     for (int i = 0; i < invCount; i++)
         inV[i].draw(window);
-
-    if (currentLevel == 4 || currentLevel == 9)
-    {
-        //saray uha lai
-        for (int i = 0; i < maxItems; i++) {
-            if (items[i].active) {
-                window.draw(items[i].sprite);
-            }
-		}
+    //Draw items on ALL levels
+    for (int i = 0; i < maxItems; i++) {
+        if (items[i].active) {
+            window.draw(items[i].sprite);
+        }
     }
     // sirf level 5 par mogera draw karo
     if (currentLevel == 5)

@@ -85,7 +85,6 @@ public:
 			if (healthE <= 0)
 			{
 				state = 2;
-				zindaE = false;
 			}// fully covered snow ma
 			else
 				state = 1; // half covered snow ma

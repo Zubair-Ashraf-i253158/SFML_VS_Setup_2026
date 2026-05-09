@@ -94,8 +94,11 @@ public:
         if (msgTimer > 0) msgTimer--;
         else msg.setString("");
 
-       
+        if (event.type != sf::Event::KeyPressed &&
+            event.type != sf::Event::MouseButtonPressed)
+            return 0;
 
+        if (event.type == sf::Event::KeyPressed) {
             // press 1-4 to buy
             int buy = -1;
             if (event.key.code == sf::Keyboard::Num1) buy = 0;
@@ -121,8 +124,8 @@ public:
                     msgTimer = 120;
                 }
             }
-        
 
+        }
         //mouse click on boxes
         if (event.type == sf::Event::MouseButtonPressed)
         {

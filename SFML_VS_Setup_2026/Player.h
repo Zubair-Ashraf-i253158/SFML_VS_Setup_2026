@@ -34,7 +34,7 @@ private:
 	bool jmp = false;
 
 	/*Life Health and Collosion code  */
-	int lives = 2;
+	int lives = 7;
 	bool hit = false; // player hit hua hai ya nahi
 	int hitTimer = 0; // hit ke baad invincibility time
 	

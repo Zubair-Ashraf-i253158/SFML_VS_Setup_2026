@@ -1,15 +1,26 @@
 #include "SnowBall.h"
-
+sf::Texture SnowBall::ballTexture; // static member definition
 SnowBall::SnowBall()
 {
-	ball.setRadius(10); // snowball size
-	ball.setFillColor(sf::Color::White); // snowball color
-	speed = 4.0f; // snowball speed
+	speed = 4.0f;
+	// only load if not already loaded
+	if (ballTexture.getSize().x == 0)
+	{
+		ballTexture.loadFromFile("assets/snowballs.png");
+	}
+	ball.setTexture(ballTexture);
+	if (ballTexture.getSize().x > 0)
+	{
+		float sx = 28.0f / ballTexture.getSize().x;
+		float sy = 28.0f / ballTexture.getSize().y;
+		ball.setScale(sx, sy);
+		ball.setOrigin(ballTexture.getSize().x / 2.f, ballTexture.getSize().y / 2.f);
+	}
 }
 
-void SnowBall::setact(bool active)  //setter
+void SnowBall::setact(bool active)
 {
-	this->active = false; // snowball active status set karo
+	this->active = active;
 }
 
 void SnowBall::setfire(float x, float y)
@@ -34,18 +45,7 @@ void SnowBall::update()
 	
 	if (active)
 	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1))
-		{
-			ball.setOutlineThickness(0);
-			++x; // x variable ko increment karo (debug ke liye)
-			if (x % 2 == 0)
-			{
-				ball.setOutlineColor(sf::Color::Red); // debug project ke liye snowball ka outline red karo jab F1 press ho
-				ball.setOutlineThickness(2); // outline thickness set karo
-				
-			}
-		}
-		ball.move(directionX * speed, 0); // move horizontally
+		ball.move(directionX * speed, 0);
 
 		if (directionX > 0 && ball.getPosition().x > 800) // right boundary check
 			active = false;

@@ -12,6 +12,7 @@
 #include "Player.h"
 #include"item.h"
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 int main()
 {
@@ -32,6 +33,26 @@ int main()
     Leaderboard leaderboard;
     bool multiPl = false;
     bool paused = false;
+    sf::Music music;
+    int currentTrack = -1; //-1 nothing playing yet
+    //0 menu, 1 level, 2 boss
+     //alive 
+    bool botomAlive[5] = {}, foogaAlive[2] = {},
+        tornadoAlive[2] = {}, invAlive[5] = {};
+    bool mogeraAlive = false, gamaAlive = false;
+
+    auto playTrack = [&](int track) {
+        if (currentTrack == track) return; //already playing this one
+        currentTrack = track;
+        music.stop();
+        if (track == 0) music.openFromFile("assets/Music/menu.ogg");
+        else if (track == 1) music.openFromFile("assets/Music/level.ogg");
+        else if (track == 2) music.openFromFile("assets/Music/boss.ogg");
+        music.setLoop(true);
+        music.setVolume(60);
+        music.play();
+        };
+
     Item* items = level.getItems();
     int maxItems = level.getMaxItems();
     player.setPos(500, 400);
@@ -86,6 +107,20 @@ int main()
        
 
         window.clear();
+		//Music switch karo game state ke hisab sa
+        if (gameState == 0 || gameState == 1 || gameState == 2 ||
+            gameState == 3 || gameState == 4 || gameState == 6 || gameState == 7)
+        {
+            playTrack(0); //menu music
+        }
+        else if (gameState == 5 || gameState == 8)
+        {
+            int lvl = level.getCurrentLevel();
+            if (lvl == 5 || lvl == 10)
+                playTrack(2); //boss music
+            else
+                playTrack(1); //level music
+        }
 
 
         if (gameState == 0) //splash
@@ -176,10 +211,7 @@ int main()
                 if (level.getCurrentLevel() == 10)
                     enemies[ecount++] = &level.getGama();
 
-                //alive 
-                bool botomAlive[5] = {}, foogaAlive[2] = {},
-                    tornadoAlive[2] = {}, invAlive[5] = {};
-                bool mogeraAlive = false, gamaAlive = false;
+               
 
                 for (int i = 0; i < level.getBotomCount(); i++)
                     botomAlive[i] = level.getBotoms()[i].getZinda();

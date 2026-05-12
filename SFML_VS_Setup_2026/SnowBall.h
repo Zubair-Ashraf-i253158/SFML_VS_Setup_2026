@@ -5,12 +5,13 @@
 class SnowBall
 {
 private:
-	sf::CircleShape ball; // snowball shape
-	bool active; // is snowball active
-	float directionX; // snowball horizontal direction
-	float directionY; // snowball vertical direction
-	float speed; // snowball speed
-
+private:
+	static sf::Texture ballTexture; // static = loaded once, shared by all snowballs
+	sf::Sprite ball;
+	bool active;
+	float directionX;
+	float directionY;
+	float speed;
 public:
 	SnowBall();
 	void setfire(float x, float y);

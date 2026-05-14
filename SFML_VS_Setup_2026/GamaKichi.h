@@ -4,7 +4,9 @@
 class Gama : public Enemy
 {
 private:
-	sf::RectangleShape rocket[5]; //gamay ke 5 rockets hongee
+	static sf::Texture rocketTexture;
+	sf::Sprite  rocket[5];
+	//sf::RectangleShape rocket[5]; //gamay ke 5 rockets hongee
 	bool rocketactive[5]; //gamay ke 5 rockets active hongee ya nahi	
 
 	float rocketx[5];

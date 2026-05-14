@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include "GamaKichi.h"
+sf::Texture Gama::rocketTexture;
 
 Gama::Gama(float x, float y)
 {
@@ -22,7 +23,21 @@ Gama::Gama(float x, float y)
     rocketTime = 0.0f; // rocket fire karne ka timer
     attackP = 0;       // shuru mein phase 1
 
-    
+	//only load once ya static texture ke liye
+    if (rocketTexture.getSize().x == 0)
+        rocketTexture.loadFromFile("assets/rocket.png");
+
+    for (int i = 0; i < 5; i++)
+    {
+        rocketactive[i] = false;
+        if (rocketTexture.getSize().x > 0)
+        {
+            rocket[i].setTexture(rocketTexture);
+            float sx = 30.0f / rocketTexture.getSize().x;
+            float sy = 30.0f / rocketTexture.getSize().y;
+            rocket[i].setScale(sx, sy);
+        }
+    }
     // Front Health Bar
     
     Ghealthbar.setSize(sf::Vector2f(200, 50));     
@@ -34,15 +49,6 @@ Gama::Gama(float x, float y)
     GhealthBack.setFillColor(sf::Color::Black);    // kala background
     GhealthBack.setPosition(300, 50);              // same position
 
-   
-    // Rockets set
-    
-    for (int i = 0; i < 5; i++)
-    {
-        rocket[i].setSize(sf::Vector2f(15, 15));    
-        rocket[i].setFillColor(sf::Color::Yellow);  // yellow colour
-        rocketactive[i] = false;                    // shuru mein sab inactive
-    }
 }
 
 void Gama::update(Platform platforms[], int count)

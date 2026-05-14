@@ -152,7 +152,10 @@ int main()
                 player = Player();
                 player.setPos(500, 400);
                 level.loadLevel(1);
+                items = level.getItems();      // refresh pointer
+                maxItems = level.getMaxItems();
                 gameState = 5;
+                event.type = sf::Event::Count;
             }
             if (result == 2) //multiplayer
             {
@@ -163,9 +166,15 @@ int main()
                 player2.setPlayer2(true);
                 player2.setPos(200, 400);
                 level.loadLevel(1);
+                items = level.getItems();      // refresh pointer
+                maxItems = level.getMaxItems();
                 gameState = 5;
+                event.type = sf::Event::Count;
             }
-            if (result == 3) gameState = 4; //level select
+            if (result == 3) {
+                gameState = 4;
+                event.type = sf::Event::Count; //clear  click event
+            } //level select
             if (result == 4)
             {
                 gameState = 7;
@@ -175,13 +184,16 @@ int main()
             if (result == 6) gameState = 1; // logout
             mainMenu.draw(window);
         }
-        else if (gameState == 4) // level select
+        else if (gameState == 4)
         {
             int lvl = levelSelect.update(event);
             if (lvl > 0)
             {
                 level.loadLevel(lvl);
+                items = level.getItems();      // refresh pointer
+                maxItems = level.getMaxItems();
                 gameState = 5;
+                event.type = sf::Event::Count; // clear  click
             }
             levelSelect.draw(window);
         }
@@ -196,7 +208,7 @@ int main()
                 if (event.type == sf::Event::KeyPressed &&
                     event.key.code == sf::Keyboard::Escape)
                     paused = true;
-                Enemy* enemies[20];
+                Enemy* enemies[70];
                 int ecount = 0;
                 for (int i = 0; i < level.getBotomCount(); i++)
                     enemies[ecount++] = &level.getBotoms()[i];
@@ -207,7 +219,14 @@ int main()
                 for (int i = 0; i < level.getInvCount(); i++)
                     enemies[ecount++] = &level.getInvisibles()[i];
                 if (level.getCurrentLevel() == 5)
+                {
                     enemies[ecount++] = &level.getMogera();
+					// babies ko bhi enemies array mein daal do
+                    Mogera& mog = level.getMogera();
+                    for (int i = 0; i < mog.getBabyCount(); i++)
+                        if (mog.getBaby(i).getZinda())
+                            enemies[ecount++] = &mog.getBaby(i);
+                }
                 if (level.getCurrentLevel() == 10)
                     enemies[ecount++] = &level.getGama();
 
@@ -221,8 +240,11 @@ int main()
                     tornadoAlive[i] = level.getTornados()[i].getZinda();
                 for (int i = 0; i < level.getInvCount(); i++)
                     invAlive[i] = level.getInvisibles()[i].getZinda();
+
                 if (level.getCurrentLevel() == 5)
+                {
                     mogeraAlive = level.getMogera().getZinda();
+                }
                 if (level.getCurrentLevel() == 10)
                     gamaAlive = level.getGama().getZinda();
 

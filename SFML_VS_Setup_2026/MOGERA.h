@@ -31,7 +31,16 @@ public:
 	{
 		// khali rehne do ya playerPos ke bagair call karo
 	}
-
+	
+	int getBabyCount() const { return babyCount; }
+	Mchild& getBaby(int i) { return babies[i]; }
+	virtual void hitByBall() override
+	{
+		Health -= 1.0f;
+		healthE = Health; 
+		if (Health <= 0)
+			zindaE = false;
+	}
 	void update(Platform platforms[], int count, sf::Vector2f playerPos);
 	void draw(sf::RenderWindow& window) override;
 	float getHealth() const;

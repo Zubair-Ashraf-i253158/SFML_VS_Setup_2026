@@ -16,9 +16,9 @@ Mogera::Mogera(float x, float y)
 
 	enemy.setPosition(x, y);
 
-	
-	Health = 10.0f; //mogera ki health
 	zindaE = true;
+	Health = 10.0f; //mogera ki health
+	
 	directionE = 0.0f;    // Mogera does not move it is stationary boss
 	timeB = 0.0f;      //time jis ke bad baby phainkni hai
 	babyCount =0;       //in array 0 matlub phala batcha 
@@ -62,10 +62,10 @@ void Mogera::update(Platform platforms[], int count, sf::Vector2f playerPos)
 	{
 		babies[i].update(platforms, count);
 	}
-
-		// health bar update karo   //abhii iska koi kaam nahi haaaaaa
-	//float percent = healthE / Health;//
-	//Hbar.setSize(sf::Vector2f(200.0f * percent, 20));
+	float percent = Health / 10.0f; // 10 is max health
+	if (percent < 0) percent = 0;
+	Hbar.setSize(sf::Vector2f(200.0f * percent, 20));
+		
 }
 
 void Mogera::draw(sf::RenderWindow& window)

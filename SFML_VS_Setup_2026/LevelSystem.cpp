@@ -30,17 +30,21 @@ Level::Level() : m(0.0, 0.0), g(0.0, 0.0)  // boss default position
 
 void Level::loadLevel(int levelNum)
 {
-    currentLevel = levelNum;
-    bCount = 0;
-    fCount = 0;
-    tCount = 0;
-    invCount = 0;
-    platformCount = 0;
+        currentLevel = levelNum;
+        bCount = 0;
+        fCount = 0;
+        tCount = 0;
+        invCount = 0;
+        platformCount = 0;
+
+        // clear all items from previous level
+        for (int i = 0; i < maxItems; i++)
+            items[i].active = false;
 
     //LEVEL 1 
     //Sirf Botom enemies
     if (levelNum == 4 || levelNum == 9) {
-        bgTexture.loadFromFile("assets/lvl bonus.png");
+        bgTexture.loadFromFile("assets/lvlbonus.png");
         background.setTexture(bgTexture);
         background.setScale(
             800.0f / bgTexture.getSize().x,
